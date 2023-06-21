@@ -10,6 +10,7 @@ then
     echo "Databse ${DATABASE_NAME} does not exist, importing schema"
     psql -h db -U postgres -c "CREATE DATABASE ${DATABASE_NAME};"
     psql -h db -U postgres -d ${DATABASE_NAME} -f /docker-entrypoint-initdb.d/schema.sql
+    psql -h db -U postgres -d ${DATABASE_NAME} -f /docker-entrypoint-initdb.d/import.sql
 else
     echo "Database ${DATABASE_NAME} already exists, nothing to do"
 fi

@@ -2,9 +2,9 @@ services:
   db:
     container_name: timescale
     image: timescale/timescaledb:latest-pg15
+    command: postgres -c  'timescaledb.telemetry_level=off'
     restart: unless-stopped
     volumes:
-      #- db-data:/home/postgres/pgdata/data
       - db-data:/var/lib/postgresql/data
     ports:
       - 5432:5432

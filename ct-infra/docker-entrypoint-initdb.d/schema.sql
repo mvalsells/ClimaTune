@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS place;
+DROP TABLE IF EXISTS place CASCADE;
 CREATE TABLE place(
     id SERIAL PRIMARY KEY,
     name VARCHAR(40) NOT NULL,
@@ -6,22 +6,17 @@ CREATE TABLE place(
     postalCode VARCHAR(10),
     city VARCHAR(100),
     countryCode VARCHAR(2),
-    longitude DECIMAL(9,6) NOT NULL,
-    latitude DECIMAL(8,6) NOT NULL
+    latitude DECIMAL(8,6) NOT NULL,
+    longitude DECIMAL(9,6) NOT NULL
+
 );
 
 DROP TABLE IF EXISTS rain;
 CREATE TABLE rain(
-    id SERIAL UNIQUE,
-    time TIMESTAMPTZ NOT NULL,
+    id SERIAL PRIMARY KEY,
+    date DATE NOT NULL,
     litersMsq DECIMAL(7,3) NOT NULL,
-    timePrecise BOOLEAN NOT NULL
-);
-
-DROP TABLE IF EXISTS rain_place;
-CREATE TABLE rain_place(
-    id_rain INT,
-    id_place INT,
     observations TEXT,
-    PRIMARY KEY(id_rain, id_place)
+    id_place INT NOT NULL,
+    FOREIGN KEY (id_place) REFERENCES place(id)
 );
