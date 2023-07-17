@@ -5,8 +5,8 @@ info:
   x-logo:
     url: ''
   contact:
-    name: Marc Valsells Niubó
-    url: https://valsells.me
+    name: ClimaTune - GitHub
+    url: https://github.com/mvalsells/ClimaTune
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0
@@ -14,6 +14,8 @@ paths:
   /place/:
     post:
       summary: Adds a new place
+      tags:
+        - place
       description: Adds a new place to the database
       operationId: addPlace
       requestBody:
@@ -37,19 +39,28 @@ paths:
                 type: string
                 example: Invalid input
         '409':
-          description: Place already exists
+          description: Place with the given id already exists
           content:
             application/json:
               schema:
                 type: string
-                example: Place already exists
+                example: Place with the given id already exists
+        '412':
+          description: Place with out of range coordinates or place with same coordinates exists
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Place with coordinates out of range or place with same coordinates exists
     get:
       summary: Returns all places
+      tags:
+        - place
       description: Get a list of all places in the database
       operationId: getPlaces
       responses:
         '200':
-          description: Place added
+          description: List of all places
           content:
             application/json:
               schema:
@@ -60,8 +71,17 @@ paths:
   /place/{id}:
     get:
       summary: Returns a place
+      tags:
+        - place
       description: Returns the place with the given id
-      operationId: getPlaces
+      operationId: getPlace
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The id of the place to return
       responses:
         '200':
           description: Place added
@@ -78,8 +98,17 @@ paths:
                 example: Place does not exist
     put:
       summary: Updates an existing place
-      description: ''
+      tags:
+        - place
+      description: 'Updates the place of the given id with the given place scheme'
       operationId: updatePlace
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The id of the place to update
       requestBody:
         content:
           application/json:
@@ -88,7 +117,7 @@ paths:
         required: true
       responses:
         '200':
-          description: Place added
+          description: Place updated
           content:
             application/json:
               schema:
@@ -109,8 +138,17 @@ paths:
                 example: Place does not exist
     delete:
       summary: Deletes an existing place
-      description: ''
+      tags:
+        - place
+      description: 'Deletes the place of the given id'
       operationId: deletePlace
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The id of the place to delete
       responses:
         '200':
           description: Place removed
@@ -132,12 +170,163 @@ paths:
             application/json:
               schema:
                 type: string
-                example: Place has rain data
+                example: Place has rain data and can not be removed
+  
+  /rain/:
+    post:
+      summary: Adds a new rain record
+      tags:
+        - rain
+      description: Adds a new rain record to the database
+      operationId: addRain
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Rain'
+        required: true
+      responses:
+        '200':
+          description: Rain record added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rain'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Invalid input
+        '409':
+          description: Rain record already exists
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Rain record already exists
+    get:
+      summary: Returns all rain records
+      tags:
+        - rain
+      description: Get a list of all rain records in the database
+      operationId: getAllRain
+      responses:
+        '200':
+          description: List of all rain records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Rain'
+
+  /rain/{id}:
+    get:
+      summary: Returns a rain record
+      tags:
+        - rain
+      description: Returns the rain record with the given id
+      operationId: getRain
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The id of the rain record to return
+      responses:
+        '200':
+          description: Rain record fetched
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rain'
+        '404':
+          description: Rain record with given id does not exist
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Rain record does not exist
+    put:
+      summary: Updates an existing rain record
+      tags:
+        - rain
+      description: 'Updates the rain record with the given rain scheme'
+      operationId: updateRain
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The id of the rain record to update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Rain'
+        required: true
+      responses:
+        '200':
+          description: Rain updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rain'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Invalid input
+        '404':
+          description: Rain record with given id does not exist
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Rain record does not exist
+    delete:
+      summary: Deletes an existing rain record
+      tags:
+        - rain
+      description: 'Deletes the rain record with the given id'
+      operationId: deleteRain
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The id of the rain record to delete
+      responses:
+        '200':
+          description: Rain record removed
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Rain record removed
+        '404': 
+          description: Rain record does not exist
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Rain record does not exist
 components:
   securitySchemes: {}
   schemas:
     Place:
       type: object
+      required:
+        - name
+        - latitude
+        - longitude
       properties:
         id:
           type: integer
@@ -171,6 +360,10 @@ components:
           maximum: 180
     Rain:
       type: object
+      required: 
+        - date
+        - litersMsq
+        - id_place
       properties:
         id:
           type: integer
@@ -196,9 +389,13 @@ components:
   headers: {}
   responses: {}
   parameters: {}
-tags: []
+tags:
+- name: place
+  description: 'Group all place related endpoints'
+- name: rain
+  description: 'Group all rain related endpoints'
 servers:
-  - url: https://api.climatune.valsells.me/
+  - url: https://api.climatune.valsells.me
     description: ''
     variables: {}
 security: []
