@@ -1,0 +1,25 @@
+services:
+  db:
+    container_name: timescale
+    image: timescale/timescaledb:latest-pg15
+    command: postgres -c  'timescaledb.telemetry_level=off'
+    restart: unless-stopped
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    env_file:
+      - .env
+  db_init:
+    container_name: timescale-init
+    image: alpine:latest
+    command: /docker-entrypoint-initdb.d/init.sh
+    restart: no
+    env_file:
+      - .env
+    depends_on:
+      - db
+    volumes:
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/
+volumes:
+  db-data:
